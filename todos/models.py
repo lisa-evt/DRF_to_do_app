@@ -3,6 +3,7 @@ from django.db import models
 
 NAME_MAX_LENGTH = 100
 
+
 class Board(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
