@@ -16,10 +16,29 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from drf_spectacular.views import (SpectacularAPIView, SpectacularRedocView,
+                                   SpectacularSwaggerView)
+
+SCHEMA_URL_NAME = 'schema'
+
+api_urlpatterns = [
+    path('auth/', include('accounts.urls')),
+    path('', include('todos.urls')),
+    path('', include('reminders.urls')),
+    path('schema/', SpectacularAPIView.as_view(), name=SCHEMA_URL_NAME),
+    path(
+        'docs/',
+        SpectacularSwaggerView.as_view(url_name=SCHEMA_URL_NAME),
+        name='swagger-ui',
+    ),
+    path(
+        'redoc/',
+        SpectacularRedocView.as_view(url_name=SCHEMA_URL_NAME),
+        name='redoc',
+    ),
+]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/auth/', include('accounts.urls')),
-    path('api/', include('todos.urls')),
-    path('api/', include('reminders.urls')),
+    path('api/', include(api_urlpatterns)),
 ]
