@@ -3,14 +3,11 @@ from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from rest_framework import viewsets
 
-from .models import Board
-from .serializers import (
-    BoardDetailSerializer,
-    BoardListSerializer,
-    BoardSerializer,
-    TodoSerializer,
-)
+from config.schema import is_schema_generation
 
+from .models import Board, Todo
+from .serializers import (BoardDetailSerializer, BoardListSerializer,
+                          BoardSerializer, TodoSerializer)
 
 BOARD_URL_KWARG = 'board_pk'
 
@@ -26,6 +23,8 @@ class BoardViewSet(viewsets.ModelViewSet):
     search_fields = ('name',)
 
     def get_queryset(self):
+        if is_schema_generation(self):
+            return Board.objects.none()
         boards = Board.objects.filter(owner=self.request.user)
         if self.action == 'list':
             return boards.annotate(todo_count=Count('todos'))
@@ -57,6 +56,8 @@ class TodoViewSet(viewsets.ModelViewSet):
         )
 
     def get_queryset(self):
+        if is_schema_generation(self):
+            return Todo.objects.none()
         return self.board.todos.all()
 
     def perform_create(self, serializer):

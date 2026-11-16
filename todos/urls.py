@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
 
-from .views import BoardViewSet, TodoViewSet, BOARD_URL_KWARG
+from .views import BOARD_URL_KWARG, BoardViewSet, TodoViewSet
 
 router = SimpleRouter()
 router.register('boards', BoardViewSet, basename='board')
