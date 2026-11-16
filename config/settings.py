@@ -4,13 +4,24 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+TRUTHY_VALUES = ('1', 'true', 'yes', 'on')
+DEFAULT_SMTP_PORT = 25
+REMINDER_MAX_DELAY = timedelta(days=1)
+VISIBILITY_TIMEOUT_MARGIN = timedelta(hours=1)
+
+
 load_dotenv()
+
+
+def env_bool(name, default=False):
+    return os.getenv(name, str(default)).strip().lower() in TRUTHY_VALUES
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
-DEBUG = os.getenv('DEBUG', 'False').strip().lower() in {'1', 'true', 'yes', 'on'}
+DEBUG = env_bool('DEBUG')
 
 ALLOWED_HOSTS = [
     host.strip()
@@ -158,3 +169,22 @@ CELERY_TASK_SERIALIZER = 'json'
 
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# Email
+EMAIL_BACKEND = os.getenv(
+    'EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend',
+)
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'localhost')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', DEFAULT_SMTP_PORT))
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS')
+EMAIL_USE_SSL = env_bool('EMAIL_USE_SSL')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@example.com')
+
+# Celery: the broker must not redeliver long-delayed tasks before they run
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'visibility_timeout': int(
+        (REMINDER_MAX_DELAY + VISIBILITY_TIMEOUT_MARGIN).total_seconds()
+    ),
+}
