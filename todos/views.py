@@ -1,6 +1,7 @@
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
 
 from config.schema import is_schema_generation
@@ -39,6 +40,12 @@ class BoardViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary='List todos of a board',
+        description='Use `?done=false` to get only uncompleted todos.',
+    ),
+)
 class TodoViewSet(viewsets.ModelViewSet):
     """Todos of one board; the board must belong to the current user."""
 
