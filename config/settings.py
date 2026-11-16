@@ -35,7 +35,7 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'to_do.apps.ToDoConfig',
+    'todos.apps.ToDoConfig',
     'accounts.apps.AccountsConfig'
 ]
 
