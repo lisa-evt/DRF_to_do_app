@@ -14,4 +14,3 @@ def schedule_reminder(reminder):
             eta=reminder.send_at,
         )
     )
-    
