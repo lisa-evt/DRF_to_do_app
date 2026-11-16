@@ -47,7 +47,8 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     'todos.apps.ToDoConfig',
-    'accounts.apps.AccountsConfig'
+    'accounts.apps.AccountsConfig',
+    'reminders.apps.RemindersConfig',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
